@@ -33,7 +33,7 @@ We have made some changes in `combine.cu` and `cuda_kernel_ops.py` for assignmen
 bash compile_cuda.sh
 ```
 
-## Problem 0: Adding Pow and Tanh
+## Problem 1: Adding Pow and Tanh
 We're still missing a few important arithmetic operations for Transformers, namely element-wise (e-wise) power and element-wise tanh. 
 
 ### 1. Implement the forward and backward functions for the Tanh and PowerScalar tensor function in `minitorch/tensor_functions.py`
@@ -80,10 +80,10 @@ python -m pytest -l -v -m a2_1
 ```
 
 
-## Problem 1: Adam Optimizer
+## Adam Optimizer
 
 We provide Adam optimizer for HW2 at [optim.py](minitorch%2Foptim.py). 
-You should be able to verify Adam's performance by the performance of [run_sentiment_linear.py](project%2Frun_sentiment_linear.py)
+You should be able to verify Adam's performance by the performance of [run_sentiment_linear.py](project%2Frun_sentiment_linear.py) after you've implemented Pow.
 ```
 python project/run_sentiment_linear.py
 ```
