@@ -5,6 +5,7 @@
 ### Install requirements
 ```
 pip install -r requirements.extra.txt
+pip install -r requirements.txt
 ```
 
 ### Install minitorch
@@ -26,7 +27,7 @@ Please **ONLY** copy your solution of assignment 1 in `MatrixMultiplyKernel`, `m
 combine.cu -> src/combine.cu
 ```
 
-We have made some changes in `combine.cu` and `cuda_kernel_ops.py` for assignment 2 compared with assignment 1. We move the GPU memory allocation and deallocation and memory copy from Host to Device / from Device to Host from `cuda_kernel_ops.py` to the `combine.cu`. We also change the datatype of `Tensor._tensor._storage` from `numpy.float64` to `numpy.float32`.
+We have made some changes in `combine.cu` and `cuda_kernel_ops.py` for assignment 2 compared with assignment 1. We have relocated the GPU memory allocation, deallocation, and memory copying operations from `cuda_kernel_ops.py` to `combine.cu`, both for host-to-device and device-to-host transfers. We also change the datatype of `Tensor._tensor._storage` from `numpy.float64` to `numpy.float32`.
 
 ### Compile your cuda kernels
 ```
