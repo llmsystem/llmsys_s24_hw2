@@ -1,6 +1,6 @@
 # Assignment 2
 
-## Preperation
+## Preparation
 
 ### Install requirements
 ```
@@ -92,7 +92,7 @@ Its validation performance should get above `60%` in 5 epochs.
 
 ## Problem 2: Implementing Tensor Functions
 
-You will be implementing all the necessary functions and modules to implement a decoder-only transformer model. **PLEASE READ THE _IMPLEMENTATION DETAILS_ SECTION BEFORE STARTING** regarding advice for working with miniTorch.
+You will be implementing all the necessary functions and modules to implement a decoder-only transformer model. **PLEASE READ THE IMPLEMENTATION DETAILS SECTION BEFORE STARTING** regarding advice for working with miniTorch.
 
 Implement the GELU activation, logsumexp, one_hot, and softmax_loss functions in `minitorch/nn.py`
 The accompanying tests are in `tests/test_nn_student.py`
