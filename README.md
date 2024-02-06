@@ -1,4 +1,4 @@
-# Assignment 2
+# LLM Systems Assignment 2
 
 ## Preparation
 
