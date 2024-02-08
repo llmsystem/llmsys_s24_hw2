@@ -119,6 +119,7 @@ The accompanying tests are in `tests/test_modules_basic.py`
 
 Hints:
 - **Embedding**: You'll want to use your one_hot function to easily get embeddings for all your tokens. This function will test both your one_hot function in combination with your Embedding module.
+- **Dropout** : Please use numpy.random.binomial with the appropriate parameters and shape for your mask.
 
 Run the following to test an individual function eg.
 ```
