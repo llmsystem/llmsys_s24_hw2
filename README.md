@@ -117,9 +117,13 @@ python -m pytest -l -v -m a2_2
 Implement the Embedding, Dropout, Linear, and LayerNorm1d modules in `minitorch/modules_basic_student.py`
 The accompanying tests are in `tests/test_modules_basic.py`
 
+Updates:
+- **Dropout** : Feel free to ignore the 3rd section of the dropout test that employs p=0.5. This is failing unexpectedly because of a random seed problem.
+- **Linear** : For people who've cloned the repo already, there is a typo in the initialization of the Linear Layer. Please use the Uniform(-sqrt(1/in_features), sqrt(1/in_features)) to initialize your weights as per PyTorch.
+
 Hints:
 - **Embedding**: You'll want to use your one_hot function to easily get embeddings for all your tokens. This function will test both your one_hot function in combination with your Embedding module.
-- **Dropout** : Please use numpy.random.binomial with the appropriate parameters and shape for your mask.
+- **Dropout** : Please use numpy.random.binomial with the appropriate parameters and shape for your mask. 
 
 Run the following to test an individual function eg.
 ```
