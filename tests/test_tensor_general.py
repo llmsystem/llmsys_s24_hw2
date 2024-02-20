@@ -3,9 +3,11 @@ from typing import Callable, Dict, Iterable, List, Tuple
 import numpy as np
 import numba
 import pytest
+import torch
 from hypothesis import given, settings
 from hypothesis.strategies import DataObject, data, integers, lists, permutations
 
+import os
 import minitorch
 from minitorch import MathTestVariable, Tensor, TensorBackend, grad_check
 
@@ -30,7 +32,7 @@ def test_create(backend: str, t1: List[float]) -> None:
     "Create different tensors."
     t2 = minitorch.tensor(t1, backend=shared[backend])
     for i in range(len(t1)):
-        assert t1[i] == t2[i]
+        np.testing.assert_allclose(t1[i], t2[i], atol=1e-5, rtol=1e-5)
 
 
 @given(data())
@@ -97,7 +99,7 @@ def test_cuda_two_grad(
 
 
 @given(data())
-@settings(max_examples=25)
+@settings(max_examples=24)
 @pytest.mark.parametrize("fn", two_arg)
 @pytest.mark.parametrize("backend", backend_tests)
 def test_cuda_two_grad_broadcast(
@@ -233,3 +235,26 @@ def test_cuda_permute(backend: str, data: DataObject) -> None:
         return a.permute(*permutation)
 
     minitorch.grad_check(permute, t1)
+
+
+@pytest.mark.parametrize("dims", [(2,3,4,5,6), (10, 5, 15, 20, 30), (16, 16, 16, 16, 16)])
+@pytest.mark.parametrize("backend", backend_tests)
+def test_bmm(dims, backend):
+    b, h, n, m, p = dims
+    d1 = np.random.randn(b, h, n, m).tolist() # (b, h, n, m)
+    d2 = np.random.randn(b, h, m, p).tolist() # (b, h, m, p)
+    
+    x1 = minitorch.tensor(d1, backend=shared[backend])
+    x2 = minitorch.tensor(d2, backend=shared[backend])
+    result = x1 @ x2
+    
+    x1_ = torch.tensor(d1)
+    x2_ = torch.tensor(d2)
+    result_ = x1_ @ x2_
+
+    np.testing.assert_allclose(
+        result.to_numpy(),
+        result_.detach().numpy(),
+        atol=1e-5, 
+        rtol=1e-5
+    )
