@@ -200,17 +200,30 @@ def layer_norm(input: Tensor, eps: float = 1e-5) -> Tensor:
     # END ASSIGN4.4
 
 
-###############################################################################
-# Assignment 2 Problem 2
-###############################################################################
+
 
 def GELU(input: Tensor) -> Tensor: 
     """Applies the GELU activation function with 'tanh' approximation element-wise
     https://pytorch.org/docs/stable/generated/torch.nn.GELU.html
     """
-    ### BEGIN YOUR SOLUTION
-    raise NotImplementedError
-    ### END YOUR SOLUTION
+    return 0.5 * input * (1 + (np.sqrt(2 / math.pi) * (input + 0.044715 * (input ** 3))).tanh())
+
+
+def one_hot(input: Tensor, num_classes: int) -> Tensor:
+    """Takes a Tensor containing indices of shape (*) and returns a tensor of shape (*, num_classes) 
+    that contains zeros except a 1 where the index of last dimension matches the corresponding value of the input tensor.
+    This is analogous to torch.nn.functional.one_hot (which contains helpful examples you may want to play around with)
+
+    Hint: You may want to use a combination of np.eye, tensor_from_numpy, 
+    """
+    return tensor_from_numpy(
+                np.eye(num_classes)[input.to_numpy().astype(int)], 
+                backend=input.backend
+            )
+
+###############################################################################
+# Assignment 2 Problem 2
+###############################################################################
 
 
 def logsumexp(input: Tensor, dim: int) -> Tensor:
@@ -230,16 +243,7 @@ def logsumexp(input: Tensor, dim: int) -> Tensor:
     ### END YOUR SOLUTION
 
 
-def one_hot(input: Tensor, num_classes: int) -> Tensor:
-    """Takes a Tensor containing indices of shape (*) and returns a tensor of shape (*, num_classes) 
-    that contains zeros except a 1 where the index of last dimension matches the corresponding value of the input tensor.
-    This is analogous to torch.nn.functional.one_hot (which contains helpful examples you may want to play around with)
 
-    Hint: You may want to use a combination of np.eye, tensor_from_numpy, 
-    """
-    ### BEGIN YOUR SOLUTION
-    raise NotImplementedError
-    ### END YOUR SOLUTION
 
 
 def softmax_loss(logits: Tensor, target: Tensor) -> Tensor:
