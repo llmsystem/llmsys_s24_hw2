@@ -110,34 +110,49 @@ def collate_batch(
     between the source (weight = 0) and target (weight = 1) tokens for loss
     """
     token_ids, tgt_token_mask = [], []
+    max_length = model_max_length
     pad_token_id = tokenizer.vocab['<pad>']
     for example in examples:
-        # token_ids_src = <de_token_ids> + <de_eos_id>
         token_ids_src = tokenizer(
             f'{example[src_key]}<eos_{src_key}>')['input_ids']
-        # token_ids_tgt = <en_token_ids> + <en_eos_id>
         token_ids_tgt = tokenizer(
             f'{example[tgt_key]}<eos_{tgt_key}>')['input_ids']
 
-        # BEGIN ASSIGN2_2
-        # TODO
-        # create token_ids, labels, and label_token_weights for every example
-        # hint: based on token_ids_src, token_ids_tgt, and pad_token_id
-        raise NotImplementedError("Collate Function Not Implemented Yet")
-        # END ASSIGN2_2
+        example_token_ids = token_ids_src + token_ids_tgt
+        example_tgt_token_mask = (
+                [0] * len(token_ids_src) + [1] * len(token_ids_tgt))
+        example_token_ids = example_token_ids[:max_length]
+        example_tgt_token_mask = example_tgt_token_mask[:max_length]
+        pad_ids = [pad_token_id] * (max_length - len(example_token_ids))
 
-    # BEGIN ASSIGN2_2
-    # TODO
-    # organzie token_ids, labels, and label_token_weights for this batch based
-    # on their example-wise results above, and return a python dict with them.from
-    raise NotImplementedError("Collate Function Not Implemented Yet")
+        token_ids.append(example_token_ids + pad_ids)
+        tgt_token_mask.append(example_tgt_token_mask + [0] * len(pad_ids))
+
+    # TODO: make examples in a 1d list, provide shape to initialize minitorch.Tensor
+    token_ids = np.array(token_ids)
+    tgt_token_mask = np.array(tgt_token_mask)
+
+    input_ids = token_ids[:, :-1]
+    labels    = token_ids[:, 1:]
+    label_token_weights = tgt_token_mask[:, 1:]
+
+    input_ids = minitorch.tensor_from_numpy(input_ids, backend=backend)
+    labels    = minitorch.tensor_from_numpy(labels, backend=backend)
+    label_token_weights = minitorch.tensor_from_numpy(label_token_weights, backend=backend)
+    
+    # input_ids = token_ids[:, :-1].tolist()
+    # labels    = token_ids[:, 1:].tolist()
+    # label_token_weights = tgt_token_mask[:, 1:].tolist()
+
+    # input_ids = minitorch.tensor(input_ids, backend=backend)
+    # labels    = minitorch.tensor(labels, backend=backend)
+    # label_token_weights = minitorch.tensor(label_token_weights, backend=backend)
 
     return {
-        'input_ids': minitorch.zeros((len(examples), model_max_length)),
-        'labels': minitorch.zeros((len(examples), model_max_length)),
-        'label_token_weights': minitorch.zeros((len(examples), model_max_length))
+        'input_ids': input_ids,
+        'labels': labels,
+        'label_token_weights': label_token_weights
     }
-    # END ASSIGN2_2
 
 
 def loss_fn(batch, model):
@@ -154,16 +169,24 @@ def loss_fn(batch, model):
 
     idx = batch['input_ids']
     idx.requires_grad_(True)
-    
+    # print("getting into loss_fn")
     logits = model(idx=idx)
-    batch_size, seq_len, vocab_size = logits.shape
-    
-    # BEGIN ASSIGN2_2
-    # TODO
-    # compute the MLE loss based on logits obtained by the model.
-    # hint: using the function minitorch.nn.softmax_loss
-    raise NotImplementedError("Loss Function Not Implemented Yet")
-    # END ASSIGN2_2
+    # print("finish prediction")
+    bs, l, c = logits.shape
+    logits = logits.view(bs * l, c)
+    targets = batch['labels'].view(bs * l)
+    label_token_weights = batch['label_token_weights'].view(bs * l)
+
+    targets.requires_grad_(True)
+    # print("start calculating loss")
+    # import pdb
+    # pdb.set_trace()
+    loss = minitorch.nn.softmax_loss(
+        logits=logits,
+        target=targets
+    )
+
+    return ((loss * label_token_weights).sum() / label_token_weights.sum())
 
 
 def train(model, optimizer, examples, n_samples, collate_fn, batch_size, desc):
