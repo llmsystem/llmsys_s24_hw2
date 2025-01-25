@@ -133,11 +133,10 @@ class FeedForward(Module):
             linear_out : second linear layer
             dropout    : dropout layer
         """
-        ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
-        # self.linear_in  = 
-        # self.linear_out = 
-        # self.dropout    = 
+        ### BEGIN YOUR SOLUTION 
+        self.linear_in  = Linear(n_embd, middle_dim, bias=bias, backend=backend)
+        self.linear_out = Linear(middle_dim, n_embd, bias=bias, backend=backend)
+        self.dropout    = Dropout(p_dropout)
         ### END YOUR SOLUTION
 
     def forward(self, x):
@@ -152,7 +151,8 @@ class FeedForward(Module):
         batch_size, seq_len, n_embd = x.shape
 
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
+        x = GELU(self.linear_in(x.view(batch_size * seq_len, n_embd)))
+        x = self.dropout(self.linear_out(x)).view(batch_size, seq_len, n_embd)
         ### END YOUR SOLUTION
 
         return x
